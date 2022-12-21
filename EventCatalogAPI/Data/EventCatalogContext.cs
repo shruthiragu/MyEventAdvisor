@@ -81,6 +81,12 @@ namespace EventCatalogAPI.Data
 
             modelBuilder.Entity<EventItem>(e =>
             {
+                e.Property(t => t.Description)
+                        .IsRequired();
+            });
+
+            modelBuilder.Entity<EventItem>(e =>
+            {
                 e.HasOne(l => l.EventLocation)
                         .WithMany()
                         .HasForeignKey(l => l.EventLocationId);

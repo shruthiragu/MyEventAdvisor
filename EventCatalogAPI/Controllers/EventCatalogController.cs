@@ -1,7 +1,10 @@
 ﻿using EventCatalogAPI.Data;
+using EventCatalogAPI.Domain;
+using EventCatalogAPI.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.Design;
 
 namespace EventCatalogAPI.Controllers
 {
@@ -33,7 +36,7 @@ namespace EventCatalogAPI.Controllers
         }
 
         [HttpGet("[action]")]
-        public async Task<IActionResult> Items(
+        public async Task<IActionResult> EventItems(
                 [FromQuery] int pageIndex = 0, [FromQuery] int pageSize = 6)
         {
             var eventCount = _context.EventItems.LongCountAsync();
@@ -41,7 +44,21 @@ namespace EventCatalogAPI.Controllers
                                                 .Skip(pageIndex * pageSize)
                                                 .Take(pageSize)
                                                 .ToListAsync();
-            return Ok(events);
+            events = ChangePictureUrl(events);
+            var model = new PaginatedItemsViewModel
+            {
+                PageIndex = pageIndex,
+                PageSize = events.Count,
+                Data = events,
+                Count = eventCount.Result
+            };
+            return Ok(model);
+        }
+
+        private List<EventItem> ChangePictureUrl(List<EventItem> events)
+        {
+            events.ForEach(e => e.PictureUrl = e.PictureUrl.Replace("http://externalcatalogbaseurltobereplaced", _configuration["ExternalBaseUrl"]));
+            return events;
         }
     }
 }
