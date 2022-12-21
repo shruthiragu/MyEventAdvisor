@@ -3,6 +3,6 @@
     public class EventLocation
     {
         public int Id { get; set; }
-        public string Location { get; set; }
+        public string LocationName { get; set; }
     }
 }
