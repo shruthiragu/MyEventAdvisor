@@ -1,0 +1,23 @@
+version: '3.4'
+
+networks:
+  frontend:
+  backend:
+
+services:
+  eventcatalog:
+    image: eventadvisor/eventcatalogapi
+    build:
+      context: .\EventCatalogAPI
+      dockerfile: Dockerfile
+    environment:
+      ConnectionString:
+      ExternalBaseUrl: https://localhost/7073
+    ports:
+  -   - "7003:80"
+    container_name: eventscatalogapi
+    networks:
+      - frontend
+      - backend
+    de
+      
