@@ -9,11 +9,6 @@ namespace EventCatalogAPI.Data
         public static void Seed (EventCatalogContext context)
         {
             context.Database.Migrate();
-            if (!context.EventItems.Any())
-            {
-                context.EventItems.AddRange(GetEventCatalogItems());
-                context.SaveChanges();
-            }
             if (!context.EventLocations.Any())
             {
                 context.EventLocations.AddRange(GetEventLocations());
@@ -24,6 +19,12 @@ namespace EventCatalogAPI.Data
                 context.EventCategories.AddRange(GetEventCategories());
                 context.SaveChanges();
             }
+            if (!context.EventItems.Any())
+            {
+                context.EventItems.AddRange(GetEventCatalogItems());
+                context.SaveChanges();
+            }
+            
 
         }
 

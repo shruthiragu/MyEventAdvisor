@@ -25,15 +25,15 @@ namespace EventCatalogAPI.Controllers
             return Ok(locations);
         }
 
-        [HttpGet("action")]
+        [HttpGet("[action]")]
         public async Task<IActionResult> EventCategories()
         {
             var categories = await _context.EventCategories.ToListAsync();
             return Ok(categories);
         }
 
-        [HttpGet("action")]
-        public async Task<IActionResult> Events(
+        [HttpGet("[action]")]
+        public async Task<IActionResult> Items(
                 [FromQuery] int pageIndex = 0, [FromQuery] int pageSize = 6)
         {
             var eventCount = _context.EventItems.LongCountAsync();

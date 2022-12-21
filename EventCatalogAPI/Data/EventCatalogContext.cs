@@ -81,16 +81,16 @@ namespace EventCatalogAPI.Data
 
             modelBuilder.Entity<EventItem>(e =>
             {
-                e.HasOne(t => t.EventLocation)
+                e.HasOne(l => l.EventLocation)
                         .WithMany()
-                        .HasForeignKey(t => t.EventLocationId);
+                        .HasForeignKey(l => l.EventLocationId);
             });
 
             modelBuilder.Entity<EventItem>(e =>
             {
-                e.HasOne(t => t.EventCategory)
+                e.HasOne(c => c.EventCategory)
                         .WithMany()
-                        .HasForeignKey(t => t.EventCategoryId);
+                        .HasForeignKey(c => c.EventCategoryId);
             });
         }
 
