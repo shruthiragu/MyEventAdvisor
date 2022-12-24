@@ -15,6 +15,8 @@ RUN dotnet build "EventCatalogAPI.csproj" -c Release -o /app/build
 FROM build AS publish
 RUN dotnet publish "EventCatalogAPI.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
+RUN sed -i 's/DEFAULT@SECLEVEL=2/DEFAULT@SECLEVEL=1/g' /etc/ssl/openssl.cnf
+
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
