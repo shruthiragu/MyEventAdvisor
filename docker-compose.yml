@@ -12,7 +12,7 @@ services:
       dockerfile: Dockerfile
     environment:
       ConnectionString: "Data Source=mssqlservereventadvisor;Initial Catalog=EventCatalogDb;User Id=sa;Password=EventApi123(!);Connect Timeout=30;TrustServerCertificate=false;Encrypt=false;"
-      ExternalBaseUrl: https://localhost/7053
+      ExternalBaseUrl: http://localhost:7053
     ports:
       - "7053:80"
     container_name: eventscatalogapi
