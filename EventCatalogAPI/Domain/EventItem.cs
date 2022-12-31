@@ -10,11 +10,15 @@
         public DateTime Date { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
+        public string EventAddress { get; set; }
+        
 
         public int EventLocationId { get; set; }
         public int EventCategoryId { get; set; }
+        public int EventOrganizerId { get; set; }
 
         public virtual EventLocation EventLocation { get; set; }
         public virtual EventCategory EventCategory { get; set; }
+        public virtual EventOrganizer EventOrganizer { get; set; }
     }
 }

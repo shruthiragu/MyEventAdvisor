@@ -36,6 +36,13 @@ namespace EventCatalogAPI.Controllers
         }
 
         [HttpGet("[action]")]
+        public async Task<IActionResult> EventOrganizers()
+        {
+            var organizers = await _context.EventOrganizers.ToListAsync();
+            return Ok(organizers);
+        }
+
+        [HttpGet("[action]")]
         public async Task<IActionResult> EventItems(
                 [FromQuery] int pageIndex = 0, [FromQuery] int pageSize = 6)
         {

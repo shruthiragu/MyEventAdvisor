@@ -38,6 +38,19 @@ namespace EventCatalogAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "EventOrganizers",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    OrganizerName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EventOrganizers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "EventItems",
                 columns: table => new
                 {
@@ -50,8 +63,10 @@ namespace EventCatalogAPI.Migrations
                     Date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     StartTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EventAddress = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: false),
                     EventLocationId = table.Column<int>(type: "int", nullable: false),
-                    EventCategoryId = table.Column<int>(type: "int", nullable: false)
+                    EventCategoryId = table.Column<int>(type: "int", nullable: false),
+                    EventOrganizerId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -68,6 +83,12 @@ namespace EventCatalogAPI.Migrations
                         principalTable: "EventLocations",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_EventItems_EventOrganizers_EventOrganizerId",
+                        column: x => x.EventOrganizerId,
+                        principalTable: "EventOrganizers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -79,6 +100,11 @@ namespace EventCatalogAPI.Migrations
                 name: "IX_EventItems_EventLocationId",
                 table: "EventItems",
                 column: "EventLocationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EventItems_EventOrganizerId",
+                table: "EventItems",
+                column: "EventOrganizerId");
         }
 
         /// <inheritdoc />
@@ -92,6 +118,9 @@ namespace EventCatalogAPI.Migrations
 
             migrationBuilder.DropTable(
                 name: "EventLocations");
+
+            migrationBuilder.DropTable(
+                name: "EventOrganizers");
         }
     }
 }

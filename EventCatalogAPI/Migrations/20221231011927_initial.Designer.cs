@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EventCatalogAPI.Migrations
 {
     [DbContext(typeof(EventCatalogContext))]
-    [Migration("20221221182445_change1")]
-    partial class change1
+    [Migration("20221231011927_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -61,10 +61,18 @@ namespace EventCatalogAPI.Migrations
                     b.Property<DateTime>("EndTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("EventAddress")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
                     b.Property<int>("EventCategoryId")
                         .HasColumnType("int");
 
                     b.Property<int>("EventLocationId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EventOrganizerId")
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
@@ -88,6 +96,8 @@ namespace EventCatalogAPI.Migrations
 
                     b.HasIndex("EventLocationId");
 
+                    b.HasIndex("EventOrganizerId");
+
                     b.ToTable("EventItems");
                 });
 
@@ -109,6 +119,24 @@ namespace EventCatalogAPI.Migrations
                     b.ToTable("EventLocations");
                 });
 
+            modelBuilder.Entity("EventCatalogAPI.Domain.EventOrganizer", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("OrganizerName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EventOrganizers");
+                });
+
             modelBuilder.Entity("EventCatalogAPI.Domain.EventItem", b =>
                 {
                     b.HasOne("EventCatalogAPI.Domain.EventCategory", "EventCategory")
@@ -123,9 +151,17 @@ namespace EventCatalogAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("EventCatalogAPI.Domain.EventOrganizer", "EventOrganizer")
+                        .WithMany()
+                        .HasForeignKey("EventOrganizerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("EventCategory");
 
                     b.Navigation("EventLocation");
+
+                    b.Navigation("EventOrganizer");
                 });
 #pragma warning restore 612, 618
         }

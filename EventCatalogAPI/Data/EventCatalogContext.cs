@@ -7,6 +7,7 @@ namespace EventCatalogAPI.Data
     {
         public DbSet<EventCategory> EventCategories { get; set; }
         public DbSet<EventLocation> EventLocations { get; set; }
+        public DbSet<EventOrganizer> EventOrganizers { get; set; }
         public DbSet<EventItem> EventItems { get; set; }
 
         public EventCatalogContext (DbContextOptions options) : base(options) { }
@@ -41,6 +42,20 @@ namespace EventCatalogAPI.Data
                         .HasMaxLength(100);
             });
 
+            modelBuilder.Entity<EventOrganizer>(e =>
+            {
+                e.Property(t => t.Id)
+                        .IsRequired()
+                        .ValueGeneratedOnAdd();
+            });
+
+            modelBuilder.Entity<EventOrganizer>(e =>
+            {
+                e.Property(t => t.OrganizerName)
+                        .IsRequired()
+                        .HasMaxLength(100);
+            });
+
             modelBuilder.Entity<EventItem>(e =>
             {
                 e.Property(t => t.Id)
@@ -59,6 +74,13 @@ namespace EventCatalogAPI.Data
                 e.Property(t => t.Name)
                         .IsRequired()
                         .HasMaxLength(200);
+            });
+
+            modelBuilder.Entity<EventItem>(e =>
+            {
+                e.Property(t => t.EventAddress)
+                        .IsRequired()
+                        .HasMaxLength(300);
             });
 
             modelBuilder.Entity<EventItem>(e =>
@@ -97,6 +119,13 @@ namespace EventCatalogAPI.Data
                 e.HasOne(c => c.EventCategory)
                         .WithMany()
                         .HasForeignKey(c => c.EventCategoryId);
+            });
+
+            modelBuilder.Entity<EventItem>(e =>
+            {
+                e.HasOne(o => o.EventOrganizer)
+                        .WithMany()
+                        .HasForeignKey(o => o.EventOrganizerId);
             });
         }
 
