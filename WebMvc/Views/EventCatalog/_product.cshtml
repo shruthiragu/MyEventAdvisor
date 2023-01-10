@@ -9,8 +9,16 @@
     <div class="esh-catalog-price">
         <span>@Model.Price.ToString("N2")</span>
     </div>
-    <input type="hidden" asp-for="@Model.EventLocation" name="location" />
-    <input type="hidden" asp-for="@Model.EventLocationId" name="locationId" />
+    <div class="esh-catalog-location">
+        <span>@Model.EventAddress : @Model.EventLocation</span>
+    </div>
+    <div class="esh-catalog-date-time">
+        <span>@Model.Date.ToString("dddd, dd MMMM yyyy")</span>
+    </div>
+    <div class="esh-catalog-date-time">
+        <span>@Model.StartTime.ToString("hh:mm tt") to @Model.EndTime.ToString("hh:mm tt")</span>
+    </div>    
+    
     <input type="hidden" asp-for="@Model.EventOrganizer" name="organizer" />
     <input type="hidden" asp-for="@Model.EventOrganizerId" name="organizerId" />
     <input type="hidden" asp-for="@Model.EventCategory" name="category" />
