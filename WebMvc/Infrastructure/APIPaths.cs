@@ -28,12 +28,8 @@
                     filterQ = $"eventLocationId={location.Value}";
                 }
                 if (category.HasValue)
-                {
-                    //filterQs = (filterQs == string.Empty) ? $"categoryId={category.Value}" :
-                      //  $"{filterQs}&categoryId={category.Value}";
-                    filterQ = (filterQ == string.Empty) ? $"eventCategoryId={category.Value}" : $"{filterQ}&eventCategoryId={category.Value}";
-
-                    //filterQ = $"{filterQ}&eventCategoryId={category.Value}";
+                {                   
+                    filterQ = (filterQ == string.Empty) ? $"eventCategoryId={category.Value}" : $"{filterQ}&eventCategoryId={category.Value}";                    
                 }
                 if (organizer.HasValue)
                 {
@@ -45,8 +41,7 @@
                 }
                 else
                 {
-                    preUri = $"{baseUri}/eventitems?pageIndex={page}&pageSize={take}&{filterQ}";
-                    //preUri = $"{baseUri}/eventitems?pageIndex={page}&pageSize={take}{filterQ}";
+                    preUri = $"{baseUri}/eventitems/filter?pageIndex={page}&pageSize={take}&{filterQ}";                    
                 }
 
                 return preUri;                
