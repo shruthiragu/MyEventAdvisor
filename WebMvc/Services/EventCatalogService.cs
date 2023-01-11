@@ -21,7 +21,8 @@ namespace WebMvc.Services
         {
             var eventItemsUri = APIPaths.EventCatalog.GetAllEventItems(_baseUri, page, size, location, category, organizer);
             var data = await _httpClient.GetStringAsync(eventItemsUri);
-            return JsonConvert.DeserializeObject<EventCatalog>(data); 
+            var deserializedData =  JsonConvert.DeserializeObject<EventCatalog>(data);               
+            return deserializedData;
         }
 
         public async Task<IEnumerable<SelectListItem>> GetEventCategoriesAsync()

@@ -50,7 +50,11 @@ namespace EventCatalogAPI.Controllers
             var events = await _context.EventItems.OrderByDescending(c => c.Date)
                                                 .Skip(pageIndex * pageSize)
                                                 .Take(pageSize)
+                                                .Include(e => e.EventLocation)
+                                                .Include(e => e.EventCategory)
+                                                .Include(e => e.EventOrganizer)                                                
                                                 .ToListAsync();
+            
             events = ChangePictureUrl(events);
             var model = new PaginatedItemsViewModel
             {
@@ -85,6 +89,9 @@ namespace EventCatalogAPI.Controllers
             var events = await query.OrderByDescending(c => c.Date)
                                                 .Skip(pageIndex * pageSize)
                                                 .Take(pageSize)
+                                                .Include(e => e.EventLocation)
+                                                .Include(e => e.EventCategory)
+                                                .Include(e => e.EventOrganizer)
                                                 .ToListAsync();
             events = ChangePictureUrl(events);
             var model = new PaginatedItemsViewModel
