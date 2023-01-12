@@ -4,24 +4,47 @@
     {
         public static class EventCatalog
         {
-            public static string GetAllEventCategories (string baseUrl)
+            public static string GetAllEventCategories (string baseUri)
             {
-                return $"{baseUrl}/eventcategories";
+                return $"{baseUri}/eventcategories";
             }
 
-            public static string GetAllEventLocations (string baseUrl)
+            public static string GetAllEventLocations (string baseUri)
             {
-                return $"{baseUrl}/eventlocations";
+                return $"{baseUri}/eventlocations";
             }
 
-            public static string GetAllEventOrganizers (string baseUrl)
+            public static string GetAllEventOrganizers (string baseUri)
             {
-                return $"{baseUrl}/eventorganizers";
+                return $"{baseUri}/eventorganizers";
             }
 
-            public static string GetAllEventItems (string baseUrl, int page, int take)
+            public static string GetAllEventItems (string baseUri, int page, int take, int? location, int? category, int? organizer)
             {
-                return $"{baseUrl}/eventitems?pageIndex={page}&pageSize={take}";
+                var preUri = string.Empty;
+                var filterQ = string.Empty;
+                if (location.HasValue)
+                {
+                    filterQ = $"eventLocationId={location.Value}";
+                }
+                if (category.HasValue)
+                {                   
+                    filterQ = (filterQ == string.Empty) ? $"eventCategoryId={category.Value}" : $"{filterQ}&eventCategoryId={category.Value}";                    
+                }
+                if (organizer.HasValue)
+                {
+                    filterQ = (filterQ == string.Empty) ? $"&eventOrganizerId={organizer.Value}" : $"{filterQ}&eventOrganizerId={organizer.Value}";
+                }
+                if (string.IsNullOrEmpty(filterQ))
+                {
+                    preUri = $"{baseUri}/eventitems?pageIndex={page}&pageSize={take}";
+                }
+                else
+                {
+                    preUri = $"{baseUri}/eventitems/filter?pageIndex={page}&pageSize={take}&{filterQ}";                    
+                }
+
+                return preUri;                
             }
 
 

@@ -15,8 +15,6 @@ Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-co
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebMvc", "WebMvc\WebMvc.csproj", "{F32083CE-78C8-46FD-82BC-B6E29DB06B8C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TokenServiceAPI", "..\JewelsOnContainers.net6.0-C14\TokenServiceAPI\TokenServiceAPI.csproj", "{5DB666EB-BD71-45FD-9F70-BF35ADDC2106}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

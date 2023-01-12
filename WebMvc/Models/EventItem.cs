@@ -17,8 +17,8 @@
         public int EventCategoryId { get; set; }
         public int EventOrganizerId { get; set; }
 
-        public string EventLocation { get; set; }
-        public string EventCategory { get; set; }
-        public string EventOrganizer { get; set; }
+        public EventLocation EventLocation{ get; set; }
+        public EventCategory EventCategory { get; set; }
+        public EventOrganizer EventOrganizer { get; set; }
     }
 }

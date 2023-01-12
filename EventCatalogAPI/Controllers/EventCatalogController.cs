@@ -50,7 +50,11 @@ namespace EventCatalogAPI.Controllers
             var events = await _context.EventItems.OrderByDescending(c => c.Date)
                                                 .Skip(pageIndex * pageSize)
                                                 .Take(pageSize)
+                                                .Include(e => e.EventLocation)
+                                                .Include(e => e.EventCategory)
+                                                .Include(e => e.EventOrganizer)                                                
                                                 .ToListAsync();
+            
             events = ChangePictureUrl(events);
             var model = new PaginatedItemsViewModel
             {
@@ -58,6 +62,44 @@ namespace EventCatalogAPI.Controllers
                 PageSize = events.Count,
                 Data = events,
                 Count = eventCount.Result
+            };
+            return Ok(model);
+        }
+
+        [HttpGet("[action]/filter")]
+        public async Task<IActionResult> EventItems(
+            [FromQuery] int? eventLocationId, [FromQuery] int? eventCategoryId, [FromQuery] int? eventOrganizerId,
+               [FromQuery] int pageIndex = 0, [FromQuery] int pageSize = 6)
+        {
+            var query = (IQueryable<EventItem>)_context.EventItems;
+            if (eventLocationId.HasValue)
+            {
+                query = query.Where(l => l.EventLocationId == eventLocationId.Value);
+            }
+            if(eventCategoryId.HasValue)
+            {
+                query = query.Where(l => l.EventCategoryId == eventCategoryId.Value);
+            }
+            if (eventOrganizerId.HasValue)
+            {
+                query = query.Where(l => l.EventOrganizerId == eventOrganizerId.Value);
+            }
+
+            var eventCount = await query.LongCountAsync();
+            var events = await query.OrderByDescending(c => c.Date)
+                                                .Skip(pageIndex * pageSize)
+                                                .Take(pageSize)
+                                                .Include(e => e.EventLocation)
+                                                .Include(e => e.EventCategory)
+                                                .Include(e => e.EventOrganizer)
+                                                .ToListAsync();
+            events = ChangePictureUrl(events);
+            var model = new PaginatedItemsViewModel
+            {
+                PageIndex = pageIndex,
+                PageSize = events.Count,
+                Data = events,
+                Count = eventCount
             };
             return Ok(model);
         }
