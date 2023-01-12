@@ -138,8 +138,10 @@
 
 .esh-catalog-price {
     text-align: center;
-    font-weight: 900;
-    font-size: 28px;
+    font-weight: 100;
+    font-size: 15px;
+    background-color: white;
+    color: violet;
 }
 
     .esh-catalog-price::before {
@@ -158,9 +160,18 @@
 
 esh-catalog-location {
     font-size: 1rem;
-    font-weight: 150;
+    font-weight: 100;
     background-color: white;
     color: indianred;
     margin-top: .25rem;
     text-align: center;    
+}
+
+esh-catalog-organizer {
+    font-size: 0.5rem;
+    font-weight: 100;
+    background-color: white;
+    color: dimgrey;
+    margin-top: .25rem;
+    text-align: center;
 }

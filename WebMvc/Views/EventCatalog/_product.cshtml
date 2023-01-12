@@ -5,21 +5,20 @@
     <input class="esh-catalog-button" type="submit" value="[ ADD TO CART ]" />
     <div class="esh-catalog-name">
         <span>@Model.Name</span>
-    </div>
-    <div class="esh-catalog-price">
-        <span>@Model.Price.ToString("N2")</span>
-    </div>
+    </div>    
     <div class="esh-catalog-location">
         <span>@Model.EventAddress : @Model.EventLocation.LocationName </span>
     </div>
     <div class="esh-catalog-date-time">
-        <span>@Model.Date.ToString("dddd, dd MMMM yyyy")</span>
+        <span>@Model.Date.ToString("ddd, MMM dd"), @Model.StartTime.ToString("h:mm tt") to @Model.EndTime.ToString("h:mm tt")</span>
     </div>
-    <div class="esh-catalog-date-time">
-        <span>@Model.StartTime.ToString("hh:mm tt") to @Model.EndTime.ToString("hh:mm tt")</span>
+    <div class="esh-catalog-price">
+        <span>@Model.Price.ToString("N2")</span>
+    </div>
+    <div class="esh-catalog-organizer">
+        <span>Organizer: @Model.EventOrganizer.OrganizerName </span>
     </div>    
     
-    <input type="hidden" asp-for="@Model.EventOrganizer" name="organizer" />
     <input type="hidden" asp-for="@Model.EventOrganizerId" name="organizerId" />
     <input type="hidden" asp-for="@Model.EventCategory" name="category" />
     <input type="hidden" asp-for="@Model.EventCategoryId" name="categoryId" />
