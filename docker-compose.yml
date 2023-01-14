@@ -22,6 +22,23 @@ services:
     depends_on:
       - mssqlservereventadvisor
 
+  token:
+    image: jewels/tokenapi
+    build:
+      context: .\TokenServiceAPI
+      dockerfile: Dockerfile
+    environment: 
+      ConnectionString: "Data Source=mssqlservertoken;Initial Catalog=TokenDb;User Id=sa;Password=tokenAPI1!;Connect Timeout=20;Encrypt=False;TrustServerCertificate=false;"
+      MvcClient: http://localhost:7070
+    ports:
+      - "7054:80"
+    container_name: tokenapi
+    networks:
+      - frontend
+      - backend
+    depends_on:
+      - mssqlservertoken
+
   eventwebmvc:
     image: eventadvisor/webmvc
     build:
@@ -30,6 +47,8 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       EventCatalogUrl: http://eventcatalog
+      IdentityUrl: http://192.168.100.194:7054
+      CallBackUrl: http://localhost:7070
     ports:
       - "7070:80"
     container_name: eventwebcontainer
@@ -38,16 +57,24 @@ services:
     depends_on:
       - eventcatalog
 
-
   mssqlservereventadvisor:
     image: "mcr.microsoft.com/mssql/server:latest"
     environment:
       ACCEPT_EULA: Y
       MSSQL_SA_PASSWORD: EventApi123(!)
     ports:
-      - "7004:1433"
+      - "7005:1433"
     container_name: eventsqlserver
     networks:
       - backend
 
-      
+  mssqlservertoken:
+    image: "mcr.microsoft.com/mssql/server:latest"
+    environment:
+      ACCEPT_EULA: Y
+      MSSQL_SA_PASSWORD: tokenAPI1!
+    ports:
+      - "7006:1433"
+    container_name: tokensqlserver
+    networks:
+      - backend

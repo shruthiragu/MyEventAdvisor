@@ -1,13 +1,51 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.IdentityModel.Tokens;
 using WebMvc.Infrastructure;
+using WebMvc.Models;
 using WebMvc.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+var configuration = builder.Configuration;
 
 builder.Services.AddControllersWithViews();
-// Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddSingleton<IHttpClient, CustomHttpClient>();
 builder.Services.AddTransient<IEventCatalogService, EventCatalogService>();
+builder.Services.AddTransient<IIdentityService<ApplicationUser>, IdentityService>();
+
+var identityUrl = configuration["IdentityUrl"];
+var callBackUrl = configuration["CallBackUrl"];
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
+    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultSignOutScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+})
+    .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddOpenIdConnect(OpenIdConnectDefaults.AuthenticationScheme, options =>
+    {
+        options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        options.Authority = identityUrl.ToString();
+        options.SignedOutRedirectUri = callBackUrl.ToString();
+        options.ClientId = "mvc";
+        options.ClientSecret = "secret";
+        options.RequireHttpsMetadata = false;
+        options.SaveTokens = true;
+        options.ResponseType = "code id_token";
+        options.GetClaimsFromUserInfoEndpoint = true;
+        options.Scope.Add("openid");
+        options.Scope.Add("profile");
+        options.Scope.Add("order");
+        options.Scope.Add("basket");
+        options.TokenValidationParameters = new TokenValidationParameters()
+        {
+            NameClaimType = "name",
+            RoleClaimType = "role",
+        };
+    });
 
 var app = builder.Build();
 
@@ -23,7 +61,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapRazorPages();
