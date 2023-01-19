@@ -31,7 +31,7 @@ services:
       ConnectionString: "Data Source=tokenmssqlserver;Initial Catalog=EventsTokenServiceDb;User Id=sa;Password=EventApi123(!);Connect Timeout=30;TrustServerCertificate=false;Encrypt=false;"
       MvcClient: http://localhost:7070
     ports:
-      - "7801:80"
+      - "7054:80"
     container_name: eventstokencontainer
     networks:
       - frontend
@@ -47,7 +47,7 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       EventCatalogUrl: http://eventcatalog
-      IdentityUrl: http://192.168.86.27:7801
+      IdentityUrl: http://192.168.86.27:7054
       CallBackUrl: http://localhost:7070
     ports:
       - "7070:80"
@@ -58,14 +58,13 @@ services:
       - eventcatalog
       - eventstokenserver
 
-
   mssqlservereventadvisor:
     image: "mcr.microsoft.com/mssql/server:latest"
     environment:
       ACCEPT_EULA: Y
       MSSQL_SA_PASSWORD: EventApi123(!)
     ports:
-      - "7004:1433"
+      - "7005:1433"
     container_name: eventsqlserver
     networks:
       - backend

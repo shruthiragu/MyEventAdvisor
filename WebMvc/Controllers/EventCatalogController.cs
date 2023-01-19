@@ -37,7 +37,6 @@ namespace WebMvc.Controllers
                 }
             };
             return View(vm);
-
         }
 
         [Authorize]
@@ -45,6 +44,5 @@ namespace WebMvc.Controllers
         {
             return View();
         }
-
     }
 }

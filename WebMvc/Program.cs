@@ -9,7 +9,6 @@ var builder = WebApplication.CreateBuilder(args);
 ConfigurationManager configuration = builder.Configuration;
 
 builder.Services.AddControllersWithViews();
-// Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddSingleton<IHttpClient, CustomHttpClient>();
 builder.Services.AddTransient<IEventCatalogService, EventCatalogService>();
@@ -43,7 +42,6 @@ builder.Services.AddAuthentication(options =>
         options.Scope.Add("basket");
         options.TokenValidationParameters = new TokenValidationParameters()
         {
-
             NameClaimType = "name",
             RoleClaimType = "role",
         };
