@@ -39,6 +39,25 @@ services:
     depends_on:
       - tokenmssqlserver
 
+  eventscart:
+    image: eventadvisor/cartapi
+    build:
+      context: .\CartApi
+      dockerfile: Dockerfile
+    environment:
+      IdentityUrl: http://192.168.86.27:7054
+      ConnectionString: eventbasket.data
+    ports:
+      - "7055:80"
+    container_name: eventadvisorcartapi
+    networks:
+      - frontend
+      - backend
+    depends_on:
+      - eventstokenserver
+      - eventbasket.data
+      
+
   eventwebmvc:
     image: eventadvisor/webmvc
     build:
@@ -78,6 +97,14 @@ services:
     ports:
       - "7011:1433"
     container_name: eventstokensqlserver
+    networks:
+      - backend
+
+  eventbasket.data:
+    image: redis
+    ports:
+      - "7012:6379"
+    container_name: eventbasketdata
     networks:
       - backend
 
