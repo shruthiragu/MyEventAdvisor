@@ -28,7 +28,7 @@ services:
       context: .\TokenServiceAPI
       dockerfile: Dockerfile
     environment:
-      ConnectionString: "Data Source=tokenmssqlserver;Initial Catalog=EventsTokenServiceDb;User Id=sa;Password=EventApi123(!);Connect Timeout=30;TrustServerCertificate=false;Encrypt=false;"
+      ConnectionString: "Data Source=mssqlservereventadvisor;Initial Catalog=EventsTokenServiceDb;User Id=sa;Password=EventApi123(!);Connect Timeout=30;TrustServerCertificate=false;Encrypt=false;"
       MvcClient: http://localhost:7070
     ports:
       - "7054:80"
@@ -37,7 +37,7 @@ services:
       - frontend
       - backend
     depends_on:
-      - tokenmssqlserver
+      - mssqlservereventadvisor
 
   eventscart:
     image: eventadvisor/cartapi
@@ -88,19 +88,7 @@ services:
       - "7005:1433"
     container_name: eventsqlserver
     networks:
-      - backend
-
-  tokenmssqlserver:
-    image: "mcr.microsoft.com/mssql/server:latest"
-    environment:
-      ACCEPT_EULA: Y
-      MSSQL_SA_PASSWORD: EventApi123(!)
-      SA_PASSWORD: EventApi123(!)
-    ports:
-      - "7011:1433"
-    container_name: eventstokensqlserver
-    networks:
-      - backend
+      - backend  
 
   eventbasket.data:
     image: redis
