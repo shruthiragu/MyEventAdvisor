@@ -18,6 +18,7 @@ namespace EventCatalogAPI.Controllers
         public EventCatalogController (EventCatalogContext context, IConfiguration configuration)
         {
             _context = context;
+            
             _configuration = configuration;
         }
 
@@ -46,6 +47,9 @@ namespace EventCatalogAPI.Controllers
         public async Task<IActionResult> EventItems(
                 [FromQuery] int pageIndex = 0, [FromQuery] int pageSize = 6)
         {
+            
+            _context.Database.SetCommandTimeout(120);
+            var timeout = _context.Database.GetCommandTimeout();
             var eventCount = _context.EventItems.LongCountAsync();
             var events = await _context.EventItems.OrderByDescending(c => c.Date)
                                                 .Skip(pageIndex * pageSize)

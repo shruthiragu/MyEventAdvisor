@@ -22,22 +22,41 @@ services:
     depends_on:
       - mssqlservereventadvisor
 
-  token:
-    image: jewels/tokenapi
+  eventstokenserver:
+    image: eventadvisor/tokenapi
     build:
       context: .\TokenServiceAPI
       dockerfile: Dockerfile
-    environment: 
-      ConnectionString: "Data Source=mssqlservertoken;Initial Catalog=TokenDb;User Id=sa;Password=tokenAPI1!;Connect Timeout=20;Encrypt=False;TrustServerCertificate=false;"
+    environment:
+      ConnectionString: "Data Source=mssqlservereventadvisor;Initial Catalog=EventsTokenServiceDb;User Id=sa;Password=EventApi123(!);Connect Timeout=30;TrustServerCertificate=false;Encrypt=false;"
       MvcClient: http://localhost:7070
     ports:
       - "7054:80"
-    container_name: tokenapi
+    container_name: eventstokencontainer
     networks:
       - frontend
       - backend
     depends_on:
-      - mssqlservertoken
+      - mssqlservereventadvisor
+
+  eventscart:
+    image: eventadvisor/cartapi
+    build:
+      context: .\CartApi
+      dockerfile: Dockerfile
+    environment:
+      IdentityUrl: http://192.168.86.27:7054
+      ConnectionString: eventbasket.data
+    ports:
+      - "7055:80"
+    container_name: eventadvisorcartapi
+    networks:
+      - frontend
+      - backend
+    depends_on:
+      - eventstokenserver
+      - eventbasket.data
+      
 
   eventwebmvc:
     image: eventadvisor/webmvc
@@ -47,8 +66,9 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       EventCatalogUrl: http://eventcatalog
-      IdentityUrl: http://192.168.100.194:7054
+      IdentityUrl: http://192.168.86.27:7054
       CallBackUrl: http://localhost:7070
+      CartUrl: http://eventscart
     ports:
       - "7070:80"
     container_name: eventwebcontainer
@@ -56,6 +76,8 @@ services:
       - frontend
     depends_on:
       - eventcatalog
+      - eventstokenserver
+      - eventscart
 
   mssqlservereventadvisor:
     image: "mcr.microsoft.com/mssql/server:latest"
@@ -66,15 +88,14 @@ services:
       - "7005:1433"
     container_name: eventsqlserver
     networks:
-      - backend
+      - backend  
 
-  mssqlservertoken:
-    image: "mcr.microsoft.com/mssql/server:latest"
-    environment:
-      ACCEPT_EULA: Y
-      MSSQL_SA_PASSWORD: tokenAPI1!
+  eventbasket.data:
+    image: redis
     ports:
-      - "7006:1433"
-    container_name: tokensqlserver
+      - "7012:6379"
+    container_name: eventbasketdata
     networks:
       - backend
+
+      

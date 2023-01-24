@@ -8,15 +8,16 @@ namespace WebMvc.Services
     {
         public ApplicationUser Get(IPrincipal principal)
         {
-            if (principal is ClaimsPrincipal claimsPrincipal)
+            if (principal is ClaimsPrincipal claims)
             {
-                return new ApplicationUser
+                var user = new ApplicationUser
                 {
-                    Id = claimsPrincipal.Claims.FirstOrDefault(claim => claim.Type == "preferred_username")?.Value ?? "",
-                    Email = claimsPrincipal.Claims.FirstOrDefault(claim => claim.Type == "preferred_username")?.Value ?? ""
+                    Email = claims.Claims.FirstOrDefault(x => x.Type == "preferred_username")?.Value ?? "",
+                    Id = claims.Claims.FirstOrDefault(x => x.Type == "preferred username")?.Value ?? "",
                 };
+                return user;
             }
-            else throw new ArgumentException();
+            throw new ArgumentException ("The principal must be a claims principal",  paramName: nameof(principal));
         }
     }
 }
