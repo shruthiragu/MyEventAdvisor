@@ -57,7 +57,7 @@ namespace WebMvc.Controllers
                     var user = _identityService.Get(HttpContext.User);
                     var product = new CartItem
                     {
-                        Id = new Guid().ToString(),
+                        Id = Guid.NewGuid().ToString(),
                         Quantity = 1,
                         ProductName = productDetails.Name,
                         PictureUrl = productDetails.PictureUrl,
