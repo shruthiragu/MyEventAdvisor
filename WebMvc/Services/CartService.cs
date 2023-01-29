@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using WebMvc.Infrastructure;
 using WebMvc.Models;
 using WebMvc.Models.CartModels;
+using WebMvc.Models.OrderModels;
 
 namespace WebMvc.Services
 {
@@ -82,6 +83,27 @@ namespace WebMvc.Services
             response.EnsureSuccessStatusCode();
             return cart;
 
+        }
+
+        public Order MapCartToOrder(Cart cart)
+        {
+            var order = new Order()
+            {
+                OrderTotal = cart.Total(),
+                OrderItems = new List<OrderItem>()
+            };
+            cart.Items.ForEach(item =>
+            {
+                order.OrderItems.Add(new OrderItem
+                {
+                    ProductId = item.ProductId,
+                    ProductName = item.ProductName,
+                    PictureUrl = item.PictureUrl,
+                    UnitPrice = item.UnitPrice,
+                    Quantity = item.Quantity
+                });
+            });
+            return order;
         }
     }
 }
