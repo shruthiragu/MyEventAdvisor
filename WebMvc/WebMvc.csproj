@@ -23,4 +23,12 @@
   <ItemGroup>
     <Folder Include="Models\OrderModels\" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Views\Order\Complete.cshtml" />
+    <None Include="Views\Order\Create.cshtml" />
+    <None Include="Views\Order\Detail.cshtml" />
+    <None Include="Views\Order\Index.cshtml" />
+    <None Include="Views\Order\Orders.cshtml" />
+    <None Include="Views\Order\_OrderItems.cshtml" />
+  </ItemGroup>
 </Project>

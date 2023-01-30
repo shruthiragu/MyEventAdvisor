@@ -15,7 +15,7 @@ namespace WebMvc.Services
         private readonly IHttpContextAccessor _contextAccessor;
         public OrderService(IConfiguration configuration, IHttpClient client, IHttpContextAccessor contextAccessor)
         {
-            _baseUrl = configuration["OrderUrl"];
+            _baseUrl = configuration["OrderUrl"] + $"/api/orders";
             _client = client;
             _contextAccessor = contextAccessor;
         }

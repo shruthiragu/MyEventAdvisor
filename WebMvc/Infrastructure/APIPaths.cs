@@ -73,7 +73,7 @@
         {
             public static string GetOrder(string baseUri, string orderId)
             {
-                return $"{baseUri}/GetOrder/orderId";
+                return $"{baseUri}/{orderId}";
             }
             public static string CreateOrder(string baseUri)
             {

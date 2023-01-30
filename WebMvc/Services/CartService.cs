@@ -96,11 +96,11 @@ namespace WebMvc.Services
             {
                 order.OrderItems.Add(new OrderItem
                 {
-                    ProductId = item.ProductId,
+                    ProductId = int.Parse(item.ProductId),
                     ProductName = item.ProductName,
                     PictureUrl = item.PictureUrl,
                     UnitPrice = item.UnitPrice,
-                    Quantity = item.Quantity
+                    Units = item.Quantity
                 });
             });
             return order;

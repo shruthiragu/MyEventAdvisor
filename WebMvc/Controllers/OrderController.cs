@@ -34,7 +34,9 @@ namespace WebMvc.Controllers
             ViewBag.StripePublishableKey = _configuration["StripePublicKey"];
             return View(order);
         }
-        public IActionResult CreateOrder(Order formOrder)
+
+        [HttpPost]
+        public async Task<IActionResult> CreateOrder(Order formOrder)
         {
             var user = _identityService.Get(HttpContext.User);
             var order = formOrder;
@@ -46,7 +48,23 @@ namespace WebMvc.Controllers
             {
                 ApiKey = _configuration["StripePrivateKey"]
             };
+            var chargeOptions = new ChargeCreateOptions
+            {
+                Amount = (int)(order.OrderTotal * 100),
+                Currency = "usd",
+                Source = order.StripeToken,
+                Description = $"My Event Advisor Order Payment by {order.UserName}",
+                ReceiptEmail = order.UserName
+            };
+            var chargeService = new ChargeService();
+            var stripeCharge = chargeService.Create(chargeOptions, options);
+            order.PaymentAuthCode = stripeCharge.Id;
+            int orderId = await _orderService.CreateOrder(order);
+            return RedirectToAction("Complete", new { id = orderId, userName = user.UserName });
         }
+        public IActionResult Complete(int id, string userName)
+        {
+            return View(id);
         }
     }
 }
