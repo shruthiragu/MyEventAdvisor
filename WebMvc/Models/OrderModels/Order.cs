@@ -7,7 +7,7 @@ namespace WebMvc.Models.OrderModels
     public enum OrderStatus
     {
         Preparing = 1,
-        Shipping = 2,
+        Shipped = 2,
         Delivered = 3
     }
     public class Order

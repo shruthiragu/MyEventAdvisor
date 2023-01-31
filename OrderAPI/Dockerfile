@@ -13,11 +13,11 @@ RUN dotnet restore "OrderAPI.csproj"
 RUN dotnet build "OrderAPI.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "CartAPI.csproj" -c Release -o /app/publish
+RUN dotnet publish "OrderAPI.csproj" -c Release -o /app/publish
 
 RUN sed -i 's/DEFAULT@SECLEVEL=2/DEFAULT@SECLEVEL=1/g' /etc/ssl/openssl.cnf
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "CartAPI.dll"]
+ENTRYPOINT ["dotnet", "OrderAPI.dll"]
