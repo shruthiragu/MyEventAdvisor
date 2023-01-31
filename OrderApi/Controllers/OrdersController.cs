@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Common.Messaging;
+using MassTransit;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -16,11 +18,13 @@ namespace OrderApi.Controllers
         private readonly OrdersContext _ordersContext;
         private readonly ILogger<OrdersController> _logger;
         private readonly IConfiguration _config;
-        public OrdersController(OrdersContext ordersContext, ILogger<OrdersController> logger, IConfiguration config)
+        private IPublishEndpoint _bus; //Configure order api to be a publisher; Inject it in constructor so that it can use it whenever necessary
+        public OrdersController(OrdersContext ordersContext, ILogger<OrdersController> logger, IConfiguration config, IPublishEndpoint bus)
         {
             _ordersContext = ordersContext;
             _logger = logger;
             _config = config;
+            _bus = bus;
         }
 
         //api/order/getorder/{id}
@@ -62,6 +66,7 @@ namespace OrderApi.Controllers
             try
             {
                 await _ordersContext.SaveChangesAsync();
+                _bus.Publish(new OrderCompletedEvent(order.BuyerId)).Wait();
                 return Ok(new { order.OrderId });
             } catch (DbUpdateException ex)
             {

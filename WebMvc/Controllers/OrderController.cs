@@ -76,7 +76,7 @@ namespace WebMvc.Controllers
                     {
                         order.PaymentAuthCode = stripeCharge.Id;
                         int orderId = await _orderService.CreateOrder(order);
-                        await _cartService.ClearCart(user);
+                        //await _cartService.ClearCart(user);
                         return RedirectToAction("Complete", new {id = orderId, userName = user.UserName});
                     } else
                     {
