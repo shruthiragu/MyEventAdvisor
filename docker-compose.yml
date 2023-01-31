@@ -56,6 +56,24 @@ services:
     depends_on:
       - eventstokenserver
       - eventbasket.data
+
+  eventsorder:
+    image: eventadvisor/orderapi
+    build:
+      context: .\OrderApi
+      dockerfile: Dockerfile
+    environment:
+      IdentityUrl: http://192.168.86.27:7054
+      ConnectionString: "Data Source=mssqlservereventadvisor;Initial Catalog=EventsOrdersDb;User Id=sa;Password=EventApi123(!);Connect Timeout=30;TrustServerCertificate=false;Encrypt=false;"
+    ports:
+      - "7056:80" 
+    container_name: eventadvisororderapi
+    networks:
+      - frontend
+      - backend
+    depends_on:
+      - eventstokenserver
+      - mssqlservereventadvisor
       
 
   eventwebmvc:
@@ -69,6 +87,9 @@ services:
       IdentityUrl: http://192.168.86.27:7054
       CallBackUrl: http://localhost:7070
       CartUrl: http://eventscart
+      OrderUrl: http://eventsorder
+      StripePublicKey: pk_test_51MUw1jDu3num9uK6M2Qeba6RFJHu3HCRGRh8Aanqui8QAPbXy9S056LdO3bIzwetVaeauFeqAIoBIZ6Y187NVzzr00pxP3Kp4J
+      StripePrivateKey: sk_test_51MUw1jDu3num9uK6iAiaoaDHJEmM7OtUGzMay4yIxa3tE115UI0xZxP4DAwUuFGDnmC7khoDUEWOHw7MyQ84KUjN00lUOuJcvS
     ports:
       - "7070:80"
     container_name: eventwebcontainer
@@ -78,6 +99,7 @@ services:
       - eventcatalog
       - eventstokenserver
       - eventscart
+      - eventsorder
 
   mssqlservereventadvisor:
     image: "mcr.microsoft.com/mssql/server:latest"
