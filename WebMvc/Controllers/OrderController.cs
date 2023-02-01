@@ -36,7 +36,7 @@ namespace WebMvc.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateOrder(Order formOrder)
+        public async Task<IActionResult> Create(Order formOrder)
         {
             var user = _identityService.Get(HttpContext.User);
             var order = formOrder;
@@ -54,12 +54,13 @@ namespace WebMvc.Controllers
                 Currency = "usd",
                 Source = order.StripeToken,
                 Description = $"My Event Advisor Order Payment by {order.UserName}",
-                ReceiptEmail = order.UserName
+                ReceiptEmail = "kanaanabukhadra@gmail.com"
             };
             var chargeService = new ChargeService();
             var stripeCharge = chargeService.Create(chargeOptions, options);
             order.PaymentAuthCode = stripeCharge.Id;
             int orderId = await _orderService.CreateOrder(order);
+            await _cartService.ClearCart(user);
             return RedirectToAction("Complete", new { id = orderId, userName = user.UserName });
         }
         public IActionResult Complete(int id, string userName)

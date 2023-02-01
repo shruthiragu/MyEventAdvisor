@@ -45,7 +45,7 @@ services:
       context: .\CartApi
       dockerfile: Dockerfile
     environment:
-      IdentityUrl: http://192.168.86.27:7054
+      IdentityUrl: http://192.168.100.194:7054
       ConnectionString: eventbasket.data
     ports:
       - "7055:80"
@@ -63,7 +63,7 @@ services:
       context: .\OrderAPI
       dockerfile: Dockerfile
     environment:
-      IdentityUrl: http://192.168.86.27:7054
+      IdentityUrl: http://192.168.100.194:7054
       ConnectionString: "Data Source=eventadvisororderserver;Initial Catalog=OrdersDb;User Id=sa;Password=EventApi123(!);TrustServerCertificate=false;Encrypt=false;"
     ports:
       - "7018:1433"
@@ -83,7 +83,7 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       EventCatalogUrl: http://eventcatalog
-      IdentityUrl: http://192.168.86.27:7054
+      IdentityUrl: http://192.168.100.194:7054
       CallBackUrl: http://localhost:7070
       CartUrl: http://eventscart
       OrderUrl: http://eventsorder
