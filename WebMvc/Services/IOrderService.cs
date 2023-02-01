@@ -4,7 +4,7 @@ namespace WebMvc.Services
 {
     public interface IOrderService
     {
-        Task<Order> GetOrder(string orderId);
+        Task<Order> GetOrder(int orderId);
         Task<int> CreateOrder(Order order);
     }
 }

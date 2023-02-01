@@ -95,10 +95,12 @@ namespace WebMvc.Controllers
             }*/
         }
 
-        public IActionResult Complete (int id, string userName)
+        public async Task<IActionResult> Complete (int id, string userName)
         {
             _logger.LogInformation($"User {userName} completed order");
-            return View(id);
+            var user = _identityService.Get(HttpContext.User);
+            var placedOrder = await _orderService.GetOrder(id);
+            return View(placedOrder);
         }
     }
 }

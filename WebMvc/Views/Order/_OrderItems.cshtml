@@ -28,6 +28,7 @@
                 <input type="hidden" value="@item.Units" name=@("orderitems[" + i + "].Units") />
             </section>
             <section class="esh-orders_new-item esh-orders_new-item--middle col-xs-2">$ @Math.Round(item.Units * item.UnitPrice, 2)</section>
+            <input type="hidden" value="@item.ProductId" name=@("orderitems[" + i + "].ProductId") />
         </article>
     }
 </section>

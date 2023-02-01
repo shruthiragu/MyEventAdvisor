@@ -28,7 +28,9 @@ namespace OrderApi.Controllers
         }
 
         //api/order/getorder/{id}
-        [HttpGet("{id}", Name = "[action]")]
+        //[HttpGet("{id}")]
+        //[HttpGet("{id}", Name = "[action]")]
+        [HttpGet("[action]/{id}")]        
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         public async Task<IActionResult> GetOrder(int id)

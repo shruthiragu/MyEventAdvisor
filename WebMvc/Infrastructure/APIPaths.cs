@@ -71,9 +71,9 @@
 
         public static class Order
         {
-            public static string GetOrder(string baseUri, string orderId)
+            public static string GetOrder(string baseUri, int? orderId)
             {
-                return $"{baseUri}/{orderId}";
+                return $"{baseUri}/getorder/{orderId.Value}";
             }
 
             public static string AddNewOrder(string baseUri)

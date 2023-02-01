@@ -49,7 +49,7 @@ namespace WebMvc.Services
 
         }
 
-        public async Task<Order> GetOrder(string orderId)
+        public async Task<Order> GetOrder(int orderId)
         {
             var token = await GetUserTokenAsync();
             var getOrderUri = APIPaths.Order.GetOrder(_baseUri, orderId);
