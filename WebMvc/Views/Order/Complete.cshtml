@@ -4,14 +4,20 @@
     ViewBag.Title = "Order Complete";
 }
 <h2>Order Complete</h2>
-<p>Thank you for your order! Your order number is: @Model.OrderId</p>
+<p>Thank you for your order! Your order has been processed successfully. Your order number is: @Model.OrderId </p>
+<p>You will receive an email confirmation of your tickets to @Model.UserName</p>
+
 <p>Here is your order information:</p>
 
 <section class="esh-orders_new-section">
     <article class="esh-orders_new-titles row">
         <section class="esh-orders_new-title col-xs-12">Order details</section>
     </article>
-
+    <section class="esh-basket-title col-xs-3">Product</section>
+    <section class="esh-basket-title col-xs-3 hidden-lg-down"></section>
+    <section class="esh-basket-title col-xs-2">Price</section>
+    <section class="esh-basket-title col-xs-2">Quantity</section>
+    <section class="esh-basket-title col-xs-2">Cost</section>
     @for (int i = 0; i < Model.OrderItems.Count; i++)
     {
         var item = Model.OrderItems[i];
@@ -40,5 +46,5 @@
 </section>
 <p>
     How about shopping for some more goods in our
-    <a asp-controller="Catalog" asp-action="Index">Store</a>
+    <a asp-controller="EventCatalog" asp-action="Index">Store</a>
 </p>
