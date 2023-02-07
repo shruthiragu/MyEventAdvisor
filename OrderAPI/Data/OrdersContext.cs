@@ -1,11 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using OrderAPI.Models;
+using OrderApi.Models;
 
-namespace OrderAPI.Data
+namespace OrderApi.Data
 {
-
     public class OrdersContext : DbContext
-
     {
         public OrdersContext(DbContextOptions options) : base(options)
         {

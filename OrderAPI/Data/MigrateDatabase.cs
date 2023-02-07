@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace OrderAPI.Data
-
+namespace OrderApi.Data
 {
     public static class MigrateDatabase
     {

@@ -4,12 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using OrderAPI.Data;
+using OrderApi.Data;
 
 #nullable disable
 
-namespace OrderAPI.Migrations
-
+namespace OrderApi.Migrations
 {
     [DbContext(typeof(OrdersContext))]
     partial class OrdersContextModelSnapshot : ModelSnapshot
@@ -23,7 +22,7 @@ namespace OrderAPI.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("OrderAPI.Models.Order", b =>
+            modelBuilder.Entity("OrderApi.Models.Order", b =>
                 {
                     b.Property<int>("OrderId")
                         .ValueGeneratedOnAdd()
@@ -69,7 +68,7 @@ namespace OrderAPI.Migrations
                     b.ToTable("Orders");
                 });
 
-            modelBuilder.Entity("OrderAPI.Models.OrderItem", b =>
+            modelBuilder.Entity("OrderApi.Models.OrderItem", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -77,17 +76,17 @@ namespace OrderAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("EventId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("EventName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
 
                     b.Property<string>("PictureUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ProductName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -104,18 +103,16 @@ namespace OrderAPI.Migrations
                     b.ToTable("OrderItems");
                 });
 
-            modelBuilder.Entity("OrderAPI.Models.OrderItem", b =>
+            modelBuilder.Entity("OrderApi.Models.OrderItem", b =>
                 {
-                    b.HasOne("OrderAPI.Models.Order", "Order")
+                    b.HasOne("OrderApi.Models.Order", null)
                         .WithMany("OrderItems")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Order");
                 });
 
-            modelBuilder.Entity("OrderAPI.Models.Order", b =>
+            modelBuilder.Entity("OrderApi.Models.Order", b =>
                 {
                     b.Navigation("OrderItems");
                 });

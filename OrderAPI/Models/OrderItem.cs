@@ -1,52 +1,40 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace OrderAPI.Models
-
+namespace OrderApi.Models
 {
     public class OrderItem
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-
-        public string EventName { get; set; }
+        public string ProductName { get; set; }
         public string PictureUrl { get; set; }
+        public int ProductId { get; private set; }
         public decimal UnitPrice { get; set; }
         public int Units { get; set; }
-        public int EventId { get; private set; }
+        //public virtual Order order { get; set; }
+        public int OrderId { get; set; } //Foreign key associated with the order
 
-        protected OrderItem() { }
-
-        public virtual Order Order { get; set; }
-
-        public int OrderId { get; set; }
-
-        public OrderItem(int eventId, string eventName, decimal unitPrice, string pictureUrl, int units = 1)
-        {
-            
-            
-
-            EventId = eventId;
-            EventName = eventName;
-            UnitPrice = unitPrice;
-            Units = units;
+        public OrderItem (string productName, string pictureUrl, int productId, decimal unitPrice, int units)
+        {           
+            ProductName = productName;
             PictureUrl = pictureUrl;
+            ProductId = productId;
+            UnitPrice = unitPrice;
+            Units = units;            
         }
 
-        public void SetPictureUri(string pictureUri)
+        public void SetPictureUrl(string pictureUrl)
         {
-            if (!String.IsNullOrWhiteSpace(pictureUri))
+            if (!String.IsNullOrEmpty(pictureUrl))
             {
-                PictureUrl = pictureUri;
+                PictureUrl = pictureUrl;
             }
         }
 
         public void AddUnits(int units)
         {
-            
-            
-
             Units += units;
         }
     }
