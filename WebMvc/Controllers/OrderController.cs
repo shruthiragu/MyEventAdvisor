@@ -1,72 +1,109 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using Polly.CircuitBreaker;
 using Stripe;
 using WebMvc.Models;
 using WebMvc.Models.OrderModels;
 using WebMvc.Services;
 
-// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace WebMvc.Controllers
 {
     public class OrderController : Controller
     {
-        private readonly ICartService _cartService;
-        public readonly IOrderService _orderService;
+        private readonly IConfiguration _config;
+        private readonly ILogger<OrderController> _logger;
+        private readonly IOrderService _orderService;
         private readonly IIdentityService<ApplicationUser> _identityService;
-        private readonly IConfiguration _configuration;
-        public OrderController(ICartService cartService, IOrderService orderService,
-            IIdentityService<ApplicationUser> identityService, IConfiguration configuration)
+        private readonly ICartService _cartService;
+        public OrderController(IConfiguration config, ILogger<OrderController> logger,
+            IOrderService orderService, ICartService cartService, IIdentityService<ApplicationUser> identityService)
         {
             _cartService = cartService;
+            _config = config;
+            _logger = logger;
             _orderService = orderService;
             _identityService = identityService;
-            _configuration = configuration;
         }
         public async Task<IActionResult> Create()
         {
             var user = _identityService.Get(HttpContext.User);
             var cart = await _cartService.GetCart(user);
             var order = _cartService.MapCartToOrder(cart);
-            ViewBag.StripePublishableKey = _configuration["StripePublicKey"];
+            ViewBag.StripePublishableKey = _config["StripePublicKey"];
             return View(order);
         }
-
+        //frmOrder is the data sitting on the order page 
         [HttpPost]
-        public async Task<IActionResult> Create(Order formOrder)
+        public async Task<IActionResult> Create(Order frmOrder)
         {
+            //if (ModelState.IsValid)
+            //{
             var user = _identityService.Get(HttpContext.User);
-            var order = formOrder;
-            order.BuyerId = user.Id;
-            order.UserName = user.Id;
-            order.OrderDate = DateTime.UtcNow;
-            order.OrderStatus = OrderStatus.Preparing;
+            var order = frmOrder;
+            order.UserName = user.Email;
+            order.BuyerId = user.Email;
+
+            //Pass secret key before making a stripe call
             var options = new RequestOptions
             {
-                ApiKey = _configuration["StripePrivateKey"]
+                ApiKey = _config["StripePrivateKey"]
             };
+
+            //getting ready to Make a chanrge to stripe
             var chargeOptions = new ChargeCreateOptions
             {
-                Amount = (int)(order.OrderTotal * 100),
+                Amount = (int)order.OrderTotal * 100,
                 Currency = "usd",
                 Source = order.StripeToken,
-                Description = $"My Event Advisor Order Payment by {order.UserName}",
-                ReceiptEmail = "kanaanabukhadra@gmail.com"
+                Description = $"EventAdvisor Order payment : {order.UserName}",
+                ReceiptEmail = user.Email
             };
             var chargeService = new ChargeService();
-            var stripeCharge = chargeService.Create(chargeOptions, options);
-            order.PaymentAuthCode = stripeCharge.Id;
-            int orderId = await _orderService.CreateOrder(order);
-            await _cartService.ClearCart(user);
-            return RedirectToAction("Complete", new { id = orderId, userName = user.UserName });
+            Charge stripeCharge = null;
+            try
+            {
+                stripeCharge = chargeService.Create(chargeOptions, options);
+            }
+            catch (StripeException ex)
+            {
+                _logger.LogDebug("Stripe Exception  : " + ex.Message);
+                ModelState.AddModelError(string.Empty, ex.Message);
+                return View(frmOrder);
+            }
+
+            //After payment, send data to microservice
+            try
+            {
+                if (stripeCharge.Id != null)
+                {
+                    order.PaymentAuthCode = stripeCharge.Id;
+                    int orderId = await _orderService.CreateOrder(order);
+                    await _cartService.ClearCart(user);
+                    return RedirectToAction("Complete", new { id = orderId, userName = user.UserName });
+                }
+                else
+                {
+                    ViewData["message"] = "Payment cannot be processed, try again.";
+                    return View(frmOrder);
+                }
+            }
+            catch (BrokenCircuitException)
+            {
+                ModelState.AddModelError("Error", "Sorry, not possible to create order. Try again.");
+                return View(frmOrder);
+            }
+
+            /*} else
+            {
+                return View(frmOrder);
+            }*/
         }
-        public IActionResult Complete(int id, string userName)
+
+        public async Task<IActionResult> Complete(int id, string userName)
         {
-            return View(id);
+            _logger.LogInformation($"User {userName} completed order");
+            var user = _identityService.Get(HttpContext.User);
+            var placedOrder = await _orderService.GetOrder(id);
+            return View(placedOrder);
         }
     }
 }
-

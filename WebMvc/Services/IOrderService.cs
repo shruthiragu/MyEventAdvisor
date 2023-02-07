@@ -1,12 +1,10 @@
-﻿using System;
-using WebMvc.Models.OrderModels;
+﻿using WebMvc.Models.OrderModels;
 
 namespace WebMvc.Services
 {
-	public interface IOrderService
+    public interface IOrderService
     {
+        Task<Order> GetOrder(int orderId);
         Task<int> CreateOrder(Order order);
-        Task<Order> GetOrder(string orderId);
     }
 }
-

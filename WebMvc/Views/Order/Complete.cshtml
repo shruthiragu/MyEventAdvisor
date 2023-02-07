@@ -1,11 +1,12 @@
-@model int
+@model Models.OrderModels.Order
 
 @{
     ViewBag.Title = "Order Complete";
 }
 <h2>Order Complete</h2>
-<p>Thank you for your order! Your order number is: @Model</p>
+<p>Thank you for your order! Your order number is: @Model.OrderId</p>
+<p>Your event tickets will be emailed to @Model.BuyerId</p>
 <p>
     How about shopping for some more goods in our
-    <a asp-controller="Catalog" asp-action="Index">Store</a>
+    <a asp-controller="EventCatalog" asp-action="Index">Store</a>
 </p>

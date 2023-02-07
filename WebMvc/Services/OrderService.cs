@@ -1,48 +1,61 @@
-﻿using System;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using WebMvc.Infrastructure;
-using WebMvc.Models.CartModels;
 using WebMvc.Models.OrderModels;
 
 namespace WebMvc.Services
 {
-	public class OrderService : IOrderService
-	{
-        private readonly string _baseUrl;
-        private readonly IHttpClient _client;
-        private readonly IHttpContextAccessor _contextAccessor;
-        public OrderService(IConfiguration configuration, IHttpClient client, IHttpContextAccessor contextAccessor)
+    public class OrderService : IOrderService
+    {
+        private readonly IConfiguration _config;
+        private readonly IHttpClient _httpClient;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ILogger _logger;
+        private readonly string _baseUri;
+        public OrderService(IConfiguration config, IHttpContextAccessor httpContextAccessor, IHttpClient httpClient, ILoggerFactory logger)
         {
-            _baseUrl = String.Concat(configuration["OrderUrl"], "/api/orders");
-            _client = client;
-            _contextAccessor = contextAccessor;
+            _config = config;
+            _httpClient = httpClient;
+            _httpContextAccessor = httpContextAccessor;
+            _logger = logger.CreateLogger<OrderService>();
+            _baseUri = $"{config["OrderUrl"]}/api/orders";
         }
 
-        public async Task<string> GetToken()
+        private async Task<string> GetUserTokenAsync()
         {
-            return await _contextAccessor.HttpContext.GetTokenAsync("access_token");
+            var context = _httpContextAccessor.HttpContext;
+            return await context.GetTokenAsync("access_token");
         }
+
         public async Task<int> CreateOrder(Order order)
         {
-            var token = await GetToken();
-            string path = APIPaths.Order.CreateOrder(_baseUrl);
-            var response = await _client.PostAsync(path, order, token);
-            var json = response.Content.ReadAsStringAsync();
-            json.Wait();
-            dynamic data = JObject.Parse(json.Result);
-            return Convert.ToInt32(data.orderId);
+            var token = await GetUserTokenAsync();
+            var createOrderUri = APIPaths.Order.AddNewOrder(_baseUri);
+            _logger.LogDebug("Order Uri: " + createOrderUri);
+
+            var response = await _httpClient.PostAsync(createOrderUri, order, token);
+
+            if (response.StatusCode == System.Net.HttpStatusCode.InternalServerError)
+            {
+                throw new Exception("Error creating order. Try later...");
+            }
+
+            var jsonString = response.Content.ReadAsStringAsync();
+            jsonString.Wait();
+            dynamic data = JObject.Parse(jsonString.Result);
+            string value = data.orderId;
+            return Convert.ToInt32(value);
+
         }
 
-        public async Task<Order> GetOrder(string orderId)
+        public async Task<Order> GetOrder(int orderId)
         {
-            var token = await GetToken();
-            string path = APIPaths.Order.GetOrder(_baseUrl, orderId);
-            var response = await _client.GetStringAsync(path, token);
-            var data = JsonConvert.DeserializeObject<Order>(response);
-            return data;
+            var token = await GetUserTokenAsync();
+            var getOrderUri = APIPaths.Order.GetOrder(_baseUri, orderId);
+            var dataString = await _httpClient.GetStringAsync(getOrderUri, token);
+            var response = JsonConvert.DeserializeObject<Order>(dataString);
+            return response;
         }
     }
 }
-

@@ -34,10 +34,10 @@ namespace CartApi.Controllers
             return Ok(updatedBasket);
         }
 
-        [HttpDelete]
-        public async Task Delete(string cartId)
+        [HttpDelete("{id}")]
+        public async Task Delete(string id)
         {
-            await _repository.DeleteCartAsync(cartId);
+            await _repository.DeleteCartAsync(id);
         }
 
     }

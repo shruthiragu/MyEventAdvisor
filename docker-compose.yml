@@ -45,7 +45,7 @@ services:
       context: .\CartApi
       dockerfile: Dockerfile
     environment:
-      IdentityUrl: http://192.168.100.194:7054
+      IdentityUrl: http://192.168.86.27:7054
       ConnectionString: eventbasket.data
     ports:
       - "7055:80"
@@ -59,20 +59,20 @@ services:
       
   eventsorder:
     image: eventadvisor/orderapi
-    build: 
+    build:
       context: .\OrderAPI
       dockerfile: Dockerfile
     environment:
-      IdentityUrl: http://192.168.100.194:7054
-      ConnectionString: "Data Source=eventadvisororderserver;Initial Catalog=OrdersDb;User Id=sa;Password=EventApi123(!);TrustServerCertificate=false;Encrypt=false;"
+      IdentityUrl: http://192.168.86.27:7054
+      ConnectionString: "Data Source=mssqlservereventadvisor;Initial Catalog=OrdersDb;User Id=sa;Password=EventApi123(!);TrustServerCertificate=false;Encrypt=false;"
     ports:
-      - "7018:1433"
+      - "7056:80"
     container_name: eventadvisororderapi
     networks:
       - frontend
       - backend
     depends_on:
-      - eventadvisororderserver
+      - mssqlservereventadvisor
       - eventstokenserver
 
   eventwebmvc:
@@ -83,12 +83,12 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       EventCatalogUrl: http://eventcatalog
-      IdentityUrl: http://192.168.100.194:7054
+      IdentityUrl: http://192.168.86.27:7054
       CallBackUrl: http://localhost:7070
       CartUrl: http://eventscart
       OrderUrl: http://eventsorder
-      StripePrivateKey: sk_test_51MVsoUJ4FlY8ZnAHiut2VteIn4aoqcz8LWIQMVFR19nKKkmz9RaVgGwtpw5kGYkZZJFl9QGlKrFcKTofiwopgM7m006obbGQXK
-      StripePublicKey: pk_test_51MVsoUJ4FlY8ZnAH4cmP3aLo4AlqTx5TIHWeQlSaDqeAvvcZ1EEXJoVKSpXz8Do655Y6fKNvuBLvyme7WDwCLZDz00W1yoJxE2
+      StripePrivateKey: sk_test_51MUw1jDu3num9uK6iAiaoaDHJEmM7OtUGzMay4yIxa3tE115UI0xZxP4DAwUuFGDnmC7khoDUEWOHw7MyQ84KUjN00lUOuJcvS
+      StripePublicKey: pk_test_51MUw1jDu3num9uK6M2Qeba6RFJHu3HCRGRh8Aanqui8QAPbXy9S056LdO3bIzwetVaeauFeqAIoBIZ6Y187NVzzr00pxP3Kp4J
     ports:
       - "7070:80"
     container_name: eventwebcontainer
@@ -116,16 +116,5 @@ services:
     ports:
       - "7012:6379"
     container_name: eventbasketdata
-    networks:
-      - backend
-
-  eventadvisororderserver:
-    image: "mcr.microsoft.com/mssql/server:latest"
-    environment:
-      ACCEPT_EULA: Y
-      MSSQL_SA_PASSWORD: EventApi123(!)
-    ports:
-      - "7013:1433"
-    container_name: ordersqlserver
     networks:
       - backend
