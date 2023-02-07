@@ -1,9 +1,9 @@
-using CartApi.Data;
-using CartApi.Messaging.Consumers;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using StackExchange.Redis;
+using OrderApi.Data;
+using RabbitMQ.Client;
 using System.IdentityModel.Tokens.Jwt;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,14 +12,7 @@ ConfigurationManager configuration = builder.Configuration;
 // Add services to the container.
 
 builder.Services.AddControllers().AddNewtonsoftJson();
-builder.Services.AddTransient<ICartRepository, RedisCartRepository>();
-builder.Services.AddSingleton<ConnectionMultiplexer>(cm =>
-{
-    var config = ConfigurationOptions.Parse(configuration["ConnectionString"], true);
-    config.ResolveDns = true;
-    config.AbortOnConnectFail = true;
-    return ConnectionMultiplexer.Connect(config);
-});
+builder.Services.AddDbContext<OrdersContext>(options => options.UseSqlServer(configuration["ConnectionString"]));
 
 JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
@@ -39,13 +32,12 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuer = false,
         ValidateAudience = false
     };
-    options.Audience = "basket";
+    options.Audience = "order";
 
 });
 
 builder.Services.AddMassTransit(cfg =>
 {
-    cfg.AddConsumer<OrderCompletedEventConsumer>();
     cfg.AddBus(provider =>
     {
         return Bus.Factory.CreateUsingRabbitMq(rmq =>
@@ -55,20 +47,23 @@ builder.Services.AddMassTransit(cfg =>
                 h.Username("guest");
                 h.Password("guest");
             });
-            rmq.ReceiveEndpoint("JewelsCartJan2022", e =>
-            {
-                e.ConfigureConsumer<OrderCompletedEventConsumer>(provider);
-            });
+            rmq.ExchangeType = ExchangeType.Fanout;
+            MessageDataDefaults.ExtraTimeToLive = TimeSpan.FromDays(1);
         });
     });
 });
-
-
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var serviceProviders = scope.ServiceProvider;
+    var context = serviceProviders.GetRequiredService<OrdersContext>();
+    MigrateDatabase.EnsureCreated(context);
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

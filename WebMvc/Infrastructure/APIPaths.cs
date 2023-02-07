@@ -69,6 +69,18 @@
             }
         }
 
+        public static class Order
+        {
+            public static string GetOrder(string baseUri, int? orderId)
+            {
+                return $"{baseUri}/getorder/{orderId.Value}";
+            }
+
+            public static string AddNewOrder(string baseUri)
+            {
+                return $"{baseUri}/new";
+            }
+        }
 
     }
 }

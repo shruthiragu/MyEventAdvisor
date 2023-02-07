@@ -44,6 +44,12 @@ services:
     build:
       context: .\CartApi
       dockerfile: Dockerfile
+    logging:
+      driver: "json-file"
+      options: {
+        max-size: "200k",
+        max-file: "10"
+      }
     environment:
       IdentityUrl: http://192.168.86.27:7054
       ConnectionString: eventbasket.data
@@ -56,6 +62,32 @@ services:
     depends_on:
       - eventstokenserver
       - eventbasket.data
+      - rabbitmq
+
+  eventsorder:
+    image: eventadvisor/orderapi
+    build:
+      context: .\OrderApi
+      dockerfile: Dockerfile
+    logging:
+      driver: "json-file"
+      options: {
+        max-size: "200k",
+        max-file: "10"
+      }
+    environment:
+      IdentityUrl: http://192.168.86.27:7054
+      ConnectionString: "Data Source=mssqlservereventadvisor;Initial Catalog=EventsOrdersDb;User Id=sa;Password=EventApi123(!);Connect Timeout=30;TrustServerCertificate=false;Encrypt=false;"
+    ports:
+      - "7056:80" 
+    container_name: eventadvisororderapi
+    networks:
+      - frontend
+      - backend
+    depends_on:
+      - eventstokenserver
+      - mssqlservereventadvisor
+      - rabbitmq
       
 
   eventwebmvc:
@@ -63,12 +95,21 @@ services:
     build:
       context: .\WebMvc
       dockerfile: Dockerfile
+    logging:
+      driver: "json-file"
+      options: {
+        max-size: "200k",
+        max-file: "10"
+      }    
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       EventCatalogUrl: http://eventcatalog
       IdentityUrl: http://192.168.86.27:7054
       CallBackUrl: http://localhost:7070
       CartUrl: http://eventscart
+      OrderUrl: http://eventsorder
+      StripePublicKey: pk_test_51MUw1jDu3num9uK6M2Qeba6RFJHu3HCRGRh8Aanqui8QAPbXy9S056LdO3bIzwetVaeauFeqAIoBIZ6Y187NVzzr00pxP3Kp4J
+      StripePrivateKey: sk_test_51MUw1jDu3num9uK6iAiaoaDHJEmM7OtUGzMay4yIxa3tE115UI0xZxP4DAwUuFGDnmC7khoDUEWOHw7MyQ84KUjN00lUOuJcvS
     ports:
       - "7070:80"
     container_name: eventwebcontainer
@@ -78,6 +119,7 @@ services:
       - eventcatalog
       - eventstokenserver
       - eventscart
+      - eventsorder
 
   mssqlservereventadvisor:
     image: "mcr.microsoft.com/mssql/server:latest"
@@ -95,6 +137,17 @@ services:
     ports:
       - "7012:6379"
     container_name: eventbasketdata
+    networks:
+      - backend
+
+  rabbitmq:
+    image: rabbitmq:3
+    container_name: rabbitmq
+    hostname: myrabbitmq
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+      - "5671:5671"
     networks:
       - backend
 
