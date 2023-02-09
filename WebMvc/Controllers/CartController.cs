@@ -39,7 +39,7 @@ namespace WebMvc.Controllers
             try
             {
                 var clearUserCart = false;
-                if (action == "[ Delete ]")
+                if (action == "[ Delete Cart ]")
                 {
                     clearUserCart = true;
                 }
