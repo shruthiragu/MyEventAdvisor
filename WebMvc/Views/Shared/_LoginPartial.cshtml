@@ -5,7 +5,7 @@
 @inject IIdentityService<ApplicationUser> UserManager
 @if (User.FindFirst(x => x.Type == "preferred_username") != null)
 {
-
+    
     <section class="col-lg-4 col-md-5 col-xs-12">
         <div class="esh-identity">
             <form asp-area="" asp-controller="Account" asp-action="SignOut" method="post" id="logoutForm" class="navbar-right">
@@ -20,8 +20,7 @@
 
 
 
-
-
+                    <a class="esh-identity-item esh-identity-name esh-identity-name--upper" asp-area="" asp-controller="EventCatalog" asp-action="About">About</a>
                     <a class="esh-identity-item"
                        href="javascript:document.getElementById('logoutForm').submit()">
 
@@ -32,7 +31,9 @@
             </form>
         </div>
     </section>
-
+    <!--<section class="col-lg-1 col-xs-12">
+        <div class="esh-about"><a asp-area="" asp-controller="EventCatalog" asp-action="About">About</a></div>
+    </section>-->
     <section class="col-lg-1 col-xs-12">
         @await Component.InvokeAsync("Cart", new { user = UserManager.Get(User) })
     </section>
