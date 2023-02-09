@@ -61,16 +61,32 @@ namespace WebMvc.Services
             return response;
         }
 
-        public async Task<Cart> SetQuantities(ApplicationUser user, Dictionary<string, int> quantities)
+        public async Task<Cart> SetQuantities(ApplicationUser user, Dictionary<string, int> quantities, bool clearUserCart)
         {
             var basket = await GetCart(user);
+            var itemsToRemove = new List<CartItem>();
             basket.Items.ForEach(x =>
             {
-                if (quantities.TryGetValue(x.Id, out var quant))
+                if (clearUserCart)
                 {
-                    x.Quantity = quant;
+                    itemsToRemove.Add(x);
+                }
+                else
+                {
+                    if (quantities.TryGetValue(x.Id, out var quant))
+                    {
+                        if (quant > 0)
+                            x.Quantity = quant;
+                        else
+                            itemsToRemove.Add(x);
+                    }
                 }
             });
+            foreach(var item in itemsToRemove)
+            {
+                basket.Items.Remove(item);
+            }
+            
             return basket;
 
         }

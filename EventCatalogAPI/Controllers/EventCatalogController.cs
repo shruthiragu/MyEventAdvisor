@@ -56,7 +56,7 @@ namespace EventCatalogAPI.Controllers
                                                 .Take(pageSize)
                                                 .Include(e => e.EventLocation)
                                                 .Include(e => e.EventCategory)
-                                                .Include(e => e.EventOrganizer)                                                
+                                                .Include(e => e.EventOrganizer)
                                                 .ToListAsync();
             
             events = ChangePictureUrl(events);

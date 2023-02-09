@@ -68,6 +68,21 @@
     transition: all 0.35s;
 }
 
+.esh-basket-checkout-delete {
+    border: none;
+    border-radius: 0;
+    background-color: orangered;
+    color: #FFFFFF;
+    display: inline-block;
+    font-size: 1rem;
+    font-weight: 400;
+    margin-top: 1rem;
+    padding: 1rem 1.5rem;
+    text-align: center;
+    text-transform: uppercase;
+    transition: all 0.35s;
+}
+
 .esh-basket-checkout:hover {
     background-color: #4a760f;
     transition: all 0.35s;
@@ -76,3 +91,5 @@
 .esh-basket-margin12{
     margin-left: 12px;
 }
+
+
