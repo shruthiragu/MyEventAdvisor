@@ -58,6 +58,9 @@
             <label class="esh-catalog-label" data-title="organizer">
                 <select asp-for="@Model.OrganizerFilterApplied" asp-items="@Model.Organizer" class="esh-catalog-filter"></select>
             </label>
+            <label class="esh-catalog-label">
+                <input type="text" asp-for="@Model.SearchStrFilterApplied" placeholder="Search All Events" height=""/>
+            </label>            
             <input class="esh-catalog-send" type="image" src="~/images/arrow-right.svg" />
         </form>
     </div>

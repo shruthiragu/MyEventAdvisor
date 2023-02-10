@@ -14,11 +14,11 @@ namespace WebMvc.Controllers
 
         }
 
-        public async Task<IActionResult> Index (int? page, int? locationFilterApplied, int? categoryFilterApplied, int? organizerFilterApplied)
+        public async Task<IActionResult> Index (int? page, int? locationFilterApplied, int? categoryFilterApplied, int? organizerFilterApplied, string? searchStrFilterApplied)
         {
             var itemsPerPage = 10;
             var eventCatalog = await _eventCatalogService.GetEventCatalogItemsAsync(page ?? 0, itemsPerPage, 
-                locationFilterApplied, categoryFilterApplied, organizerFilterApplied);
+                locationFilterApplied, categoryFilterApplied, organizerFilterApplied, searchStrFilterApplied);
             var vm = new EventCatalogIndexViewModel
             {
                 Location = await _eventCatalogService.GetEventLocationsAsync(),
@@ -28,6 +28,7 @@ namespace WebMvc.Controllers
                 LocationFilterApplied = locationFilterApplied,
                 CategoryFilterApplied = categoryFilterApplied,
                 OrganizerFilterApplied = organizerFilterApplied,
+                SearchStrFilterApplied = searchStrFilterApplied,
                 PaginationInfo = new PaginationInfo
                 {
                     TotalItems = eventCatalog.Count,

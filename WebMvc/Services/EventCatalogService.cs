@@ -17,9 +17,9 @@ namespace WebMvc.Services
                 _baseUri = $"{config["EventCatalogUrl"]}/api/eventcatalog";
         }
             
-        public async Task<EventCatalog> GetEventCatalogItemsAsync(int page, int size, int? location, int? category, int? organizer)
+        public async Task<EventCatalog> GetEventCatalogItemsAsync(int page, int size, int? location, int? category, int? organizer, string? searchStr)
         {
-            var eventItemsUri = APIPaths.EventCatalog.GetAllEventItems(_baseUri, page, size, location, category, organizer);
+            var eventItemsUri = APIPaths.EventCatalog.GetAllEventItems(_baseUri, page, size, location, category, organizer, searchStr);
             var data = await _httpClient.GetStringAsync(eventItemsUri);
             var deserializedData =  JsonConvert.DeserializeObject<EventCatalog>(data);               
             return deserializedData;

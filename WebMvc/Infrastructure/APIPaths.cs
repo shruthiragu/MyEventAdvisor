@@ -19,7 +19,7 @@
                 return $"{baseUri}/eventorganizers";
             }
 
-            public static string GetAllEventItems (string baseUri, int page, int take, int? location, int? category, int? organizer)
+            public static string GetAllEventItems (string baseUri, int page, int take, int? location, int? category, int? organizer, string? searchStr)
             {
                 var preUri = string.Empty;
                 var filterQ = string.Empty;
@@ -34,6 +34,10 @@
                 if (organizer.HasValue)
                 {
                     filterQ = (filterQ == string.Empty) ? $"&eventOrganizerId={organizer.Value}" : $"{filterQ}&eventOrganizerId={organizer.Value}";
+                }
+                if (!string.IsNullOrEmpty(searchStr))
+                {
+                    filterQ = (filterQ == string.Empty) ? $"searchString={searchStr}" : $"{filterQ}&searchString={searchStr}";
                 }
                 if (string.IsNullOrEmpty(filterQ))
                 {

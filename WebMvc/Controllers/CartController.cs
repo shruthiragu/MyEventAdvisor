@@ -30,6 +30,7 @@ namespace WebMvc.Controllers
         [HttpPost]
         public async Task<IActionResult> Index(Dictionary<string, int> quantities, string action)
         {
+            
             //This method is called when you click either update cart button or proceed to checkout button on cart page
             if (action == "[ Checkout ]")
             {
@@ -37,8 +38,13 @@ namespace WebMvc.Controllers
             }
             try
             {
+                var clearUserCart = false;
+                if (action == "[ Delete Cart ]")
+                {
+                    clearUserCart = true;
+                }
                 var user = _identityService.Get(HttpContext.User);
-                var basket = await _cartService.SetQuantities(user, quantities);
+                var basket = await _cartService.SetQuantities(user, quantities, clearUserCart);
                 var vm = await _cartService.UpdateCart(basket);
             } catch (BrokenCircuitException)
             {
