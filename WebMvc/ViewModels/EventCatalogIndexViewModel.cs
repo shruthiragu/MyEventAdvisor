@@ -13,5 +13,6 @@ namespace WebMvc.ViewModels
         public int? LocationFilterApplied { get; set; }
         public int? CategoryFilterApplied { get; set; }
         public int? OrganizerFilterApplied { get; set; }
+        public string? SearchStrFilterApplied { get; set; }
     }
 }

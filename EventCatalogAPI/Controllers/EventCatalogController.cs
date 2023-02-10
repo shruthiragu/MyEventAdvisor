@@ -73,7 +73,7 @@ namespace EventCatalogAPI.Controllers
         [HttpGet("[action]/filter")]
         public async Task<IActionResult> EventItems(
             [FromQuery] int? eventLocationId, [FromQuery] int? eventCategoryId, [FromQuery] int? eventOrganizerId,
-               [FromQuery] int pageIndex = 0, [FromQuery] int pageSize = 6)
+               [FromQuery] string? searchString, [FromQuery] int pageIndex = 0, [FromQuery] int pageSize = 6)
         {
             var query = (IQueryable<EventItem>)_context.EventItems;
             if (eventLocationId.HasValue)
@@ -87,6 +87,10 @@ namespace EventCatalogAPI.Controllers
             if (eventOrganizerId.HasValue)
             {
                 query = query.Where(l => l.EventOrganizerId == eventOrganizerId.Value);
+            }
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                query = query.Where(l => l.Name.Contains(searchString));
             }
 
             var eventCount = await query.LongCountAsync();
