@@ -4,7 +4,8 @@
     ViewBag.Title = "Order Complete";
 }
 <h2>Order Complete</h2>
-<p style="color:blue; font-size:20px;">Thank you for your order! Your order has been processed successfully. Your order number is: @Model.OrderId </p>
+<h3 style="color:green">Hello @Model.FirstName @Model.LastName, </h3>
+<p style="color:blue; font-size:20px;"> Thank you for your order! Your order has been processed successfully. Your order number is: @Model.OrderId</p>
 <p style="color:blue; font-size:20px;">You will receive an email confirmation of your tickets to @Model.UserName</p>
 
 <p>Here is your order information:</p>
